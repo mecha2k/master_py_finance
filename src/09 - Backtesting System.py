@@ -47,10 +47,17 @@ class MarketDataSource(object):
     def fetch_historical_prices(self):
         import quandl
 
-        # Update your Quandl API key here...
         QUANDL_API_KEY = "BCzkk3NDWt7H9yjzx-DY"
         quandl.ApiConfig.api_key = QUANDL_API_KEY
-        df = quandl.get(self.symbol, start_date=self.start, end_date=self.end)
+        src_data = "data/aapl.pkl"
+        try:
+            df = pd.read_pickle(src_data)
+            print("data reading from file...")
+        except FileNotFoundError:
+            df = quandl.get(self.symbol, start_date=self.start, end_date=self.end)
+            df.to_pickle(src_data)
+        print(df.head())
+
         return df
 
     def run(self):
